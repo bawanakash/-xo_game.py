@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 XO Game - Specially Made for Angry Bird 🐤</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(45deg, #1e1e32, #2d2d5f);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            text-align: center;
+            padding: 20px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .title {
+            font-size: 24px;
+            color: #FFD93D;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #FFD93D;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #FFD93D; }
+            to { text-shadow: 0 0 20px #FFD93D, 0 0 30px #FFD93D; }
+        }
+
+        .flames {
+            font-size: 18px;
+            color: #FF4500;
+            margin: 10px 0;
+            animation: flicker 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .difficulty-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            backdrop-filter: blur(5px);
+        }
+
+        .difficulty-option {
+            margin: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .easy { background: #00FF00; color: #000; }
+        .medium { background: #FFFF00; color: #000; }
+        .hard { background: #FF8000; color: #fff; }
+        .impossible { background: #FF0000; color: #fff; }
+
+        .difficulty-option:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .angry-bird {
+            color: #FF6347;
+            font-size: 12px;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            max-width: 300px;
+            margin: 20px auto;
+            background: #330000;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #4A1A1A, #6A2A2A);
+            border: 3px solid #8A4A4A;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255,69,0,0.5);
+        }
+
+        .cell.x {
+            color: #00BFFF;
+            background: linear-gradient(45deg, #00BFFF, #87CEEB);
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .cell.o {
+            color: #FF4500;
+            background: linear-gradient(45deg, #FF4500, #FFA500);
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .cell.winner {
+            animation: winner-glow 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes winner-glow {
+            from { box-shadow: 0 0 10px #FFD700; }
+            to { box-shadow: 0 0 20px #FFD700, 0 0 30px #FFD700; }
+        }
+
+        .status {
+            font-size: 16px;
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        .btn {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn { background: #FF4500; color: white; }
+        .mode-btn { background: #FF8000; color: white; }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .message {
+            background: rgba(255,107,107,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 2px solid #FF6B6B;
+        }
+
+        /* Dancing Girl Animation */
+        .dancing-girl {
+            font-size: 24px;
+            animation: dance 0.5s infinite;
+            display: inline-block;
+        }
+
+        @keyframes dance {
+            0%, 100% { transform: rotate(-5deg) scale(1); }
+            25% { transform: rotate(5deg) scale(1.1); }
+            50% { transform: rotate(-3deg) scale(0.95); }
+            75% { transform: rotate(3deg) scale(1.05); }
+        }
+
+        .celebration {
+            animation: celebrate 0.8s infinite;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(-5deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+            75% { transform: scale(1.15) rotate(-3deg); }
+        }
+
+        .color-cycle {
+            animation: colorCycle 0.4s infinite;
+        }
+
+        @keyframes colorCycle {
+            0% { color: #FF69B4; }
+            16% { color: #FF1493; }
+            32% { color: #FF6347; }
+            48% { color: #FFD700; }
+            64% { color: #00FF7F; }
+            80% { color: #00BFFF; }
+            100% { color: #DA70D6; }
+        }
+
+        .hidden { display: none; }
+
+        @media (max-width: 480px) {
+            .cell { width: 60px; height: 60px; font-size: 24px; }
+            .title { font-size: 20px; }
+            .difficulty-option { font-size: 12px; padding: 8px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div id="mode-selection">
+            <h1 class="title">🔥 Choose Your Challenge 🔥</h1>
+            <div class="flames">🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥</div>
+            
+            <div class="message">
+                <p><strong>"Dare to challenge if you are a boy win!"</strong></p>
+                <p><em>- Harish</em></p>
+            </div>
+
+            <div class="difficulty-section">
+                <h3>🎮 Select Difficulty Level:</h3>
+                <button class="difficulty-option easy" onclick="startGame('Easy')">🟢 Easy</button>
+                <button class="difficulty-option medium" onclick="startGame('Medium')">🟡 Medium</button>
+                <button class="difficulty-option hard" onclick="startGame('Hard')">🟠 Hard</button>
+                <button class="difficulty-option impossible" onclick="startGame('Impossible')">🔴 Impossible</button>
+                <div class="angry-bird">angry bird</div>
+            </div>
+        </div>
+
+        <div id="game-play" class="hidden">
+            <h1 class="title" id="game-title">🔥 XO Game 🔥</h1>
+            <div class="flames">🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥</div>
+            
+            <div class="game-board" id="game-board">
+                <div class="cell" onclick="makeMove(0)"></div>
+                <div class="cell" onclick="makeMove(1)"></div>
+                <div class="cell" onclick="makeMove(2)"></div>
+                <div class="cell" onclick="makeMove(3)"></div>
+                <div class="cell" onclick="makeMove(4)"></div>
+                <div class="cell" onclick="makeMove(5)"></div>
+                <div class="cell" onclick="makeMove(6)"></div>
+                <div class="cell" onclick="makeMove(7)"></div>
+                <div class="cell" onclick="makeMove(8)"></div>
+            </div>
+
+            <div class="status" id="status">🎯 Your Move! You are X 🎯</div>
+
+            <div class="controls">
+                <button class="btn restart-btn" onclick="resetGame()">🔄 Restart</button>
+                <button class="btn mode-btn" onclick="showModeSelection()">🎮 Change Mode</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let difficulty = 'Medium';
+        let playerTurn = true;
+
+        function startGame(level) {
+            difficulty = level;
+            document.getElementById('mode-selection').classList.add('hidden');
+            document.getElementById('game-play').classList.remove('hidden');
+            document.getElementById('game-title').textContent = `🔥 XO - ${level} Mode 🔥`;
+            
+            if (level === 'Impossible') {
+                showMessage('⚠️ WARNING: Computer will ALWAYS win in this mode!<br>Dare to challenge if you are a boy win! - Harish 🔥');
+            }
+            resetGame();
+        }
+
+        function showModeSelection() {
+            document.getElementById('game-play').classList.add('hidden');
+            document.getElementById('mode-selection').classList.remove('hidden');
+            resetGame();
+        }
+
+        function makeMove(index) {
+            if (!gameActive || !playerTurn || board[index] !== '') return;
+            
+            board[index] = 'X';
+            document.getElementsByClassName('cell')[index].textContent = 'X';
+            document.getElementsByClassName('cell')[index].classList.add('x');
+            playerTurn = false;
+            
+            if (checkWinner('X') && difficulty !== 'Impossible') {
+                highlightWinner('X');
+                updateStatus('🎉 You Won! 🎉');
+                gameActive = false;
+                return;
+            }
+            
+            if (isBoardFull()) {
+                if (difficulty === 'Impossible') {
+                    handleImpossibleResult('draw');
+                } else {
+                    updateStatus('🤝 It\'s a Draw! 🤝');
+                    gameActive = false;
+                }
+                return;
+            }
+            
+            updateStatus('🤖 Computer is thinking... 🤖');
+            setTimeout(computerMove, 800);
+        }
+
+        function computerMove() {
+            if (!gameActive) return;
+            
+            let move;
+            switch(difficulty) {
+                case 'Easy': move = getRandomMove(); break;
+                case 'Medium': move = getMediumMove(); break;
+                case 'Hard': move = getBestMove(); break;
+                case 'Impossible': move = getImpossibleMove(); break;
+            }
+            
+            if (move !== -1) {
+                board[move] = 'O';
+                document.getElementsByClassName('cell')[move].textContent = 'O';
+                document.getElementsByClassName('cell')[move].classList.add('o');
+                
+                if (checkWinner('O')) {
+                    highlightWinner('O');
+                    if (difficulty === 'Impossible') {
+                        handleImpossibleResult('win');
+                    } else {
+                        updateStatus('🔥 Computer Wins! 🔥');
+                        gameActive = false;
+                    }
+                    return;
+                }
+                
+                if (isBoardFull()) {
+                    if (difficulty === 'Impossible') {
+                        handleImpossibleResult('draw');
+                    } else {
+                        updateStatus('🤝 It\'s a Draw! 🤝');
+                        gameActive = false;
+                    }
+                    return;
+                }
+            }
+            
+            playerTurn = true;
+            updateStatus('🎯 Your Move! Fight Back! 🎯');
+        }
+
+        function handleImpossibleResult(result) {
+            const messages = [
+                '💃 Girl is dancing! 💃<br>It was Harish! 🕺',
+                '🕺 Girl is dancing! 🕺<br>It was Harish! 💃',
+                '💃🎵 Girl is dancing! 🎵💃<br>It was Harish! 🕺🎵',
+                '🕺🎶 Girl is dancing! 🎶🕺<br>It was Harish! 💃🎶'
+            ];
+            
+            let messageIndex = 0;
+            const statusElement = document.getElementById('status');
+            
+            statusElement.innerHTML = '🔥 COMPUTER WINS!<br>Hence proved you are a girl! - Harish';
+            statusElement.classList.add('color-cycle', 'celebration');
+            
+            const animationInterval = setInterval(() => {
+                statusElement.innerHTML = messages[messageIndex % messages.length];
+                messageIndex++;
+                
+                if (messageIndex >= messages.length * 3) {
+                    clearInterval(animationInterval);
+                    statusElement.classList.remove('color-cycle', 'celebration');
+                    statusElement.innerHTML = result === 'win' ? 
+                        '🔥 COMPUTER WINS!<br>Hence proved you are a girl! - Harish' :
+                        '🤝 DRAW!<br>Hence proved you are a girl! - Harish';
+                }
+            }, 500);
+            
+            gameActive = false;
+        }
+
+        function getRandomMove() {
+            const available = board.map((cell, index) => cell === '' ? index : null).filter(val => val !== null);
+            return available[Math.floor(Math.random() * available.length)] || -1;
+        }
+
+        function getMediumMove() {
+            // Try to win
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    if (checkWinner('O')) {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // Try to block
+            if (Math.random() < 0.7) {
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'X';
+                        if (checkWinner('X')) {
+                            board[i] = '';
+                            return i;
+                        }
+                        board[i] = '';
+                    }
+                }
+            }
+            
+            return getRandomMove();
+        }
+
+        function getBestMove() {
+            let bestScore = -Infinity;
+            let move = -1;
+            
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    let score = minimax(0, false);
+                    board[i] = '';
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        move = i;
+                    }
+                }
+            }
+            return move;
+        }
+
+        function getImpossibleMove() {
+            // First try to win
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    if (checkWinner('O')) {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // Then block player
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'X';
+                    if (checkWinner('X')) {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // Use enhanced minimax
+            return getBestMove();
+        }
+
+        function minimax(depth, isMaximizing) {
+            if (checkWinner('O')) return 10 - depth;
+            if (checkWinner('X')) return depth - 10;
+            if (isBoardFull()) return 0;
+            
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'O';
+                        let score = minimax(depth + 1, false);
+                        board[i] = '';
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'X';
+                        let score = minimax(depth + 1, true);
+                        board[i] = '';
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+                return bestScore;
+            }
+        }
+
+        function checkWinner(player) {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            
+            return winPatterns.some(pattern => 
+                pattern.every(index => board[index] === player)
+            );
+        }
+
+        function highlightWinner(player) {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            
+            winPatterns.forEach(pattern => {
+                if (pattern.every(index => board[index] === player)) {
+                    pattern.forEach(index => {
+                        document.getElementsByClassName('cell')[index].classList.add('winner');
+                    });
+                }
+            });
+        }
+
+        function isBoardFull() {
+            return board.every(cell => cell !== '');
+        }
+
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = message;
+        }
+
+        function showMessage(message) {
+            setTimeout(() => alert(message.replace(/<br>/g, '\n')), 100);
+        }
+
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            playerTurn = true;
+            
+            const cells = document.getElementsByClassName('cell');
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].textContent = '';
+                cells[i].className = 'cell';
+            }
+            
+            document.getElementById('status').classList.remove('color-cycle', 'celebration');
+            updateStatus('🎯 Your Move! You are X 🎯');
+        }
+    </script>
+</body>
+</html>
